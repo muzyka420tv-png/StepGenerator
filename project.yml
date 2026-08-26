@@ -1,5 +1,6 @@
 name: StepGenerator
 options:
+  objectVersion: 56
   bundleIdPrefix: com.example
   deploymentTarget:
     iOS: "17.0"
