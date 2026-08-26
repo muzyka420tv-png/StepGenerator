@@ -1,0 +1,27 @@
+name: Build IPA
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download XcodeGen 2.38.0
+        run: |
+          curl -L -o xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/2.38.0/xcodegen-2.38.0.zip
+          unzip xcodegen.zip -d xcodegen_bin
+          sudo cp xcodegen_bin/bin/xcodegen /usr/local/bin/
+          sudo chmod +x /usr/local/bin/xcodegen
+      - name: Generate Xcode project
+        run: xcodegen generate
+      - name: Build unsigned IPA
+        run: |
+          xcodebuild -project StepGenerator.xcodeproj -scheme StepGenerator -sdk iphoneos -configuration Release -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+          mkdir Payload
+          cp -r build/Build/Products/Release-iphoneos/StepGenerator.app Payload/
+          zip -r StepGenerator.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: StepGenerator-IPA
+          path: StepGenerator.ipa
