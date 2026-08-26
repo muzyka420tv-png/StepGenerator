@@ -7,12 +7,8 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
-      - name: Download XcodeGen 2.38.0
-        run: |
-          curl -L -o xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/2.38.0/xcodegen-2.38.0.zip
-          unzip xcodegen.zip -d xcodegen_bin
-          sudo cp xcodegen_bin/bin/xcodegen /usr/local/bin/
-          sudo chmod +x /usr/local/bin/xcodegen
+      - name: Install XcodeGen
+        run: brew install xcodegen
       - name: Generate Xcode project
         run: xcodegen generate
       - name: Build unsigned IPA
